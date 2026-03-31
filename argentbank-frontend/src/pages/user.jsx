@@ -1,13 +1,35 @@
 import "../stylepages/user.css";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../store/authSlice";
 
 function User() {
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    console.log("Token dans User.jsx:", token);
+    if (token) {
+      fetch("http://localhost:3001/api/v1/user/profile", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => dispatch(setUser(data.body)));
+    }
+  }, [token, dispatch]);
+
   return (
     <main className="main bg-dark">
       <div className="header">
         <h1>
           Bienvenu
           <br />
-          Tony Jarvis!
+          {user && `${user.firstName} ${user.lastName}`}
         </h1>
         <button className="edit-button">Modifier le nom</button>
       </div>
