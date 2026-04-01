@@ -1,15 +1,17 @@
 import "../stylepages/user.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../store/authSlice";
+import Account from "../components/Account/Account";
 
 function User() {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const [showEdit, setShowEdit] = useState(false);
+  const [newUserName, setNewUserName] = useState("");
 
   useEffect(() => {
-    console.log("Token dans User.jsx:", token);
     if (token) {
       fetch("http://localhost:3001/api/v1/user/profile", {
         method: "GET",
@@ -23,47 +25,79 @@ function User() {
     }
   }, [token, dispatch]);
 
+  const handleupateUser = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/v1/user/profile",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userName: newUserName,
+          }),
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        dispatch(setUser(data.body));
+        setShowEdit(false);
+      } else {
+        console.error("Failed to update user name");
+      }
+    } catch (error) {
+      console.error("Error updating user name:", error);
+    }
+  };
+
   return (
     <main className="main bg-dark">
       <div className="header">
         <h1>
           Bienvenu
           <br />
-          {user && `${user.firstName} ${user.lastName}`}
+          {user && user.userName}
         </h1>
-        <button className="edit-button">Modifier le nom</button>
+        {showEdit ? (
+          <div>
+            <input
+              type="text"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+              placeholder="Nouveau nom d'utilisateur"
+            />
+            <button className="edit-button" onClick={handleupateUser}>
+              Sauvegarder
+            </button>
+            <button className="edit-button" onClick={() => setShowEdit(false)}>
+              Annuler
+            </button>
+          </div>
+        ) : (
+          <button className="edit-button" onClick={() => setShowEdit(true)}>
+            Modifier le nom
+          </button>
+        )}
       </div>
+
       <h2 className="sr-only">Comptes</h2>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Compte courant (x8349)</h3>
-          <p className="account-amount">2,082.79€</p>
-          <p className="account-amount-description">Solde disponible</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">Voir les transactions</button>
-        </div>
-      </section>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Épargne (x6712)</h3>
-          <p className="account-amount">10,928.42€</p>
-          <p className="account-amount-description">Solde disponible</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">Voir les transactions</button>
-        </div>
-      </section>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Carte de crédit (x8349)</h3>
-          <p className="account-amount">184.30€</p>
-          <p className="account-amount-description">Solde actuel</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">Voir les transactions</button>
-        </div>
-      </section>
+      <Account
+        title="Argent Bank Checking (x8349)"
+        amount="$2,082.79"
+        description="Disponible"
+      />
+      <Account
+        title="Argent Bank Savings (x6712)"
+        amount="$10,928.42"
+        description="Disponible"
+      />
+      <Account
+        title="Argent Bank Credit Card (x8349)"
+        amount="$184.30"
+        description="Disponible"
+      />
     </main>
   );
 }

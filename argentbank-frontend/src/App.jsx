@@ -5,6 +5,7 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import User from "./pages/user";
 import "./stylepages/global.css";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 function App() {
   return (
@@ -13,7 +14,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/user" element={<User />} />
+        <Route
+          path="/user"
+          element={
+            <PrivateRoute>
+              <User />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer />
     </BrowserRouter>

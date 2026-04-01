@@ -26,16 +26,17 @@ function Header() {
         <h1 className="sr-only">Argent Bank</h1>
       </Link>
       {token ? (
-        <>
+        <div className="main-nav-item1">
           <Link className="main-nav-item" to="/user">
-            <i className="fa fa-user-circle"></i>
             {user && user.userName}
+            <i className="fa fa-user-circle"></i>
           </Link>
+
+          <i className="fa-solid fa-gear"></i>
           <Link className="main-nav-item" to="/" onClick={handleLogout}>
-            <i className="fa fa-sign-out"></i>
-            Se déconnecter
+            <i className="fa-solid fa-power-off"></i>
           </Link>
-        </>
+        </div>
       ) : (
         <Link className="main-nav-item" to="/login">
           <i className="fa fa-user-circle"></i>
