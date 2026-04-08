@@ -5,26 +5,35 @@ import { setUser } from "../store/authSlice";
 import Account from "../components/Account/Account";
 
 function User() {
+  // useSelector : lit le token JWT stocké dans Redux
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
+  // useSelector : lit les données du profil utilisateur stockées dans Redux
   const user = useSelector((state) => state.auth.user);
+
+  // États locaux pour le formulaire d'édition du nom d'utilisateur
   const [showEdit, setShowEdit] = useState(false);
   const [newUserName, setNewUserName] = useState("");
 
+  // useEffect : se déclenche au montage du composant et à chaque changement de token
+  // Récupère le profil utilisateur depuis l'API avec le token comme authentification
   useEffect(() => {
     if (token) {
       fetch("http://localhost:3001/api/v1/user/profile", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          // Le token JWT est envoyé dans le header pour identifier l'utilisateur
           Authorization: `Bearer ${token}`,
         },
       })
         .then((response) => response.json())
+        // Stocke les données du profil dans Redux
         .then((data) => dispatch(setUser(data.body)));
     }
   }, [token, dispatch]);
 
+  // Met à jour le userName via un appel PUT à l'API
   const handleupateUser = async () => {
     try {
       const response = await fetch(
@@ -42,7 +51,9 @@ function User() {
       );
       if (response.ok) {
         const data = await response.json();
+        // Met à jour les données utilisateur dans Redux avec le nouveau userName
         dispatch(setUser(data.body));
+        // Ferme le formulaire d'édition
         setShowEdit(false);
       } else {
         console.error("Failed to update user name");
@@ -58,8 +69,10 @@ function User() {
         <h1>
           Bienvenu
           <br />
+          {/* Affiche le userName uniquement si user est chargé dans Redux */}
           {user && user.userName}
         </h1>
+        {/* Affichage conditionnel : formulaire d'édition ou bouton selon showEdit */}
         {showEdit ? (
           <div>
             <input
@@ -83,6 +96,7 @@ function User() {
       </div>
 
       <h2 className="sr-only">Comptes</h2>
+      {/* Composant Account réutilisable pour chaque ligne de compte bancaire */}
       <Account
         title="Argent Bank Checking (x8349)"
         amount="$2,082.79"
