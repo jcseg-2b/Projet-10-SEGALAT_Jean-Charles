@@ -6,6 +6,7 @@ import Login from "./pages/login";
 import User from "./pages/user";
 import "./stylepages/global.css";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Error from "./pages/error";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/*" element={<Error />} />
         <Route
           path="/user"
           element={
