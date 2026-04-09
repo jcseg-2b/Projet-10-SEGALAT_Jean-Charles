@@ -35,6 +35,11 @@ function User() {
 
   // Met à jour le userName via un appel PUT à l'API
   const handleupateUser = async () => {
+    // verifie que le champ n'est pas vide avant d'envoyer la requête
+    if (!newUserName.trim()) {
+      alert("Le nom d'utilisateur ne peut pas être vide.");
+      return;
+    }
     try {
       const response = await fetch(
         "http://localhost:3001/api/v1/user/profile",

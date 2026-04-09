@@ -206,7 +206,7 @@ paths:
           description: Internal Server Error
 
   /accounts/{accountId}/transactions/{transactionId}/info:
-    post:
+    put:
       security:
         - Bearer: []
       tags:
