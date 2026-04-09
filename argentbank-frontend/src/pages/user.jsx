@@ -79,7 +79,7 @@ function User() {
         </h1>
         {/* Affichage conditionnel : formulaire d'édition ou bouton selon showEdit */}
         {showEdit ? (
-          <div>
+          <div className="edit-form">
             <input
               type="text"
               value={newUserName}
