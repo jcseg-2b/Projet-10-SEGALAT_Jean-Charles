@@ -31,7 +31,7 @@ function Header() {
             {user && user.userName}
             <i className="fa fa-user-circle"></i>
           </Link>
-          <i className="fa-solid fa-gear"></i>
+
           <Link className="main-nav-item" to="/" onClick={handleLogout}>
             <i className="fa-solid fa-power-off"></i>
           </Link>

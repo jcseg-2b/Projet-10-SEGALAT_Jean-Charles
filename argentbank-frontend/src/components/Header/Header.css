@@ -42,3 +42,9 @@
   max-width: 100%;
   width: 200px;
 }
+
+@media screen and (max-width: 768px) {
+  .main-nav-item1 {
+    padding-right: 0;
+  }
+}
