@@ -295,15 +295,6 @@ definitions:
     properties:
       userName:
         type: string
-  TransactionInfo:
-    type: object
-    properties:
-      category:
-        type: string
-        description: transaction category
-      notes:
-        type: string
-        description: transaction notes
   TransactionUpdate:
     type: object
     properties:
