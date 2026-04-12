@@ -109,24 +109,36 @@ paths:
       tags:
         - Transaction Module
       summary: Get Transactions
-      description: API for fetching transactions of an account
+      description: API for fetching all transactions of an account for the current month
       parameters:
         - in: path
           name: accountId
           required: true
           type: string
           description: ID of the account
+        - in: query
+          name: month
+          required: false
+          type: integer
+          description: Month to filter transactions (1-12), defaults to current month
+        - in: query
+          name: year
+          required: false
+          type: integer
+          description: Year to filter transactions, defaults to current year
       produces:
         - application/json
       responses:
         "200":
           description: Transactions retrieved successfully
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/TransactionListResponse"
         "400":
           description: Invalid Fields
         "401":
           description: Unauthorized
+        "403":
+          description: Forbidden - You are not allowed to access this account
         "404":
           description: Account not found
         "500":
@@ -156,11 +168,13 @@ paths:
         "200":
           description: Transaction details retrieved successfully
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/TransactionResponse"
         "400":
           description: Invalid Fields
         "401":
           description: Unauthorized
+        "403":
+          description: Forbidden - You are not allowed to access this account
         "404":
           description: Account or Transaction not found
         "500":
@@ -172,8 +186,8 @@ paths:
         - Bearer: []
       tags:
         - Transaction Module
-      summary: Add Transaction Info
-      description: API for adding info to a specific transaction
+      summary: Add or Update Transaction Info
+      description: API for adding or updating user-defined info (notes, category) on a specific transaction
       parameters:
         - in: path
           name: accountId
@@ -187,7 +201,7 @@ paths:
           description: ID of the transaction
         - in: body
           name: body
-          description: Add transaction info attributes
+          description: Transaction info attributes to add or update
           required: true
           schema:
             $ref: "#/definitions/TransactionUpdate"
@@ -195,13 +209,15 @@ paths:
         - application/json
       responses:
         "200":
-          description: Transaction info added successfully
+          description: Transaction info updated successfully
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/TransactionResponse"
         "400":
           description: Invalid Fields
         "401":
           description: Unauthorized
+        "403":
+          description: Forbidden - You are not allowed to access this account
         "404":
           description: Account or Transaction not found
         "500":
@@ -211,8 +227,8 @@ paths:
         - Bearer: []
       tags:
         - Transaction Module
-      summary: Delete Transaction
-      description: API for deleting a specific transaction
+      summary: Delete Transaction Info
+      description: API for removing user-added info (notes and category) from a specific transaction
       parameters:
         - in: path
           name: accountId
@@ -228,13 +244,15 @@ paths:
         - application/json
       responses:
         "200":
-          description: Transaction deleted successfully
+          description: Transaction info deleted successfully
           schema:
             $ref: "#/definitions/ApiResponse"
         "400":
           description: Invalid Fields
         "401":
           description: Unauthorized
+        "403":
+          description: Forbidden - You are not allowed to access this account
         "404":
           description: Account or Transaction not found
         "500":
@@ -295,6 +313,54 @@ definitions:
     properties:
       userName:
         type: string
+  Transaction:
+    type: object
+    properties:
+      id:
+        type: string
+        description: unique transaction ID
+      date:
+        type: string
+        format: date
+        description: transaction date
+      description:
+        type: string
+        description: transaction description
+      amount:
+        type: number
+        description: transaction amount
+      balance:
+        type: number
+        description: account balance after transaction
+      type:
+        type: string
+        description: transaction type (e.g. Electronic)
+      category:
+        type: string
+        description: user-defined category
+      notes:
+        type: string
+        description: user-defined notes
+  TransactionResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        $ref: "#/definitions/Transaction"
+  TransactionListResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: array
+        items:
+          $ref: "#/definitions/Transaction"
   TransactionUpdate:
     type: object
     properties:
